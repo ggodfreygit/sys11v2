@@ -124,6 +124,7 @@
 #define SYS_ioctl        64
 #define SYS_select       65
 #define SYS_poll         66
+#define SYS_meld         121
 
 //                              -- Pathname-related --
 #define SYS_link         67

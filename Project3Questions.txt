@@ -1,0 +1,20 @@
+﻿Name: Gage Godfrey
+
+Due Date: 12/1/17
+
+COP4610
+
+Project 3
+
+
+1. (5 points) What is the difference between UIO_USERISPACE and UIO_USERSPACE? When should one use UIO_SYSSPACE instead?
+
+	The difference between UIO_USERISPACE and UIO_USERSPACE is that UIO_USERISPACE is used to define the process code and UIO_USERSPACE is used to define the process data.
+
+2. (5 points) In what file are copyin and copyout defined? Hint: These functions are called in the kernel when one targeted data area is located within the address space of a user process, which may be swapped out.
+
+3. (5 points) What is the purpose of the SYSCALL macro? How do they get generated?
+
+4. (5 points) To add a new system call SYS_meld, what numerical value is possible? Where would you define it?
+
+5. (10 points) Describe the function call flow from the user-level test program to your implementation of sys_open or sys_meld in the kernel? (Besides a good understanding of the kernel code, you need to answer this question by reading the test program, the header file unistd.h, and the SYSCALL macros.)
