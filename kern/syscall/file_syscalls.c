@@ -86,7 +86,7 @@ sys_read(int fd, userptr_t buf, size_t size, int *retval)
 
 	struct iovec io;
 	struct uio data_uio;
-	uio_kinit(&io, &data_uio, buf, size, file->of_offset, UIO_READ);	//contruct uio!
+	uio_kinit(&io, &data_uio, buf, size, file->of_offset, UIO_READ);	//construct uio!
 	//CALL VOP_READ!
 	result = VOP_READ(file->of_vnode, &data_uio);
 	if(result){	//VOPREAD fails!!!
@@ -188,3 +188,78 @@ sys_close(int fd)
 /* 
 * meld () - combine the content of two files word by word into a new file
 */
+int sys_meld(const_userptr_t filename1, const_userptr_t filename2, const_userptr_t filename3, int flags, mode_t  mode, int *retval)
+{
+	int result = 0;
+	char *kpath1 = (char*)kmalloc(sizeof(char)*PATH_MAX);
+	char *kpath2 = (char*)kmalloc(sizeof(char)*PATH_MAX);
+	char *kpath3 = (char*)kmalloc(sizeof(char)*PATH_MAX);
+
+	result = copyinstr(filename1, kpath1, PATH_MAX, NULL);
+	if(result) {	//copyinstr fails!
+		return result;
+	}
+	
+	result = copyinstr(filename2, kpath2, PATH_MAX, NULL);
+	if(result) {	//copyinstr fails!
+		return result;
+	}
+
+	result = copyinstr(filename3, kpath3, PATH_MAX, NULL);
+	if(result) {	//copyinstr fails!
+		return result;
+	}
+	struct openfile *file1;
+	struct openfile *file2;
+	struct openfile *file3;
+	result = openfile_open(kpath1, flags, mode, &file1);
+	if(result){	//openfile fails!
+		return result;
+	}
+	result = openfile_open(kpath2, flags, mode, &file2);
+	if(result){	//openfile fails!
+		return result;
+	}
+	result = openfile_open(kpath3, flags, mode, &file3);
+	if(result){	//openfile fails!
+		return result;
+	}
+	result = filetable_place(curproc->p_filetable, file1, retval);
+	int fd1 = *retval;
+	if(result){	//filetable_place fails!
+		return result;
+	}
+	result = filetable_place(curproc->p_filetable, file2, retval);
+	int fd2 = *retval;
+	if(result){	//filetable_place fails!
+		return result;
+	}
+	result = filetable_place(curproc->p_filetable, file3, retval);
+	if(result){	//filetable_place fails!
+		return result;
+	}
+	int fd3 = *retval;
+	//while there is still more file to be read in each of file1 and file2,
+	//loop every four bytes and read 4 bytes from file2 into one buffer, 4 bytes from file1
+	//into another buffer, merge the buffers, then sys_write to file 3....
+	//struggling with the implementation on this.......
+	
+	//final retval will be amount of bytes written to file three, a value easily totalled from the loop
+	sys_close(fd1);
+	sys_close(fd2);
+	sys_close(fd3);
+	/*
+
+	(void) filename1; // suppress compilation warning until code gets written
+(void) filename2; // suppress compilation warning until code gets written
+(void) filename3; // suppress compilation warning until code gets written
+	(void) flags; // suppress compilation warning until code gets written
+	(void) mode; // suppress compilation warning until code gets written
+	(void) retval; // suppress compilation warning until code gets written
+*/
+
+
+
+	return result;
+
+}
