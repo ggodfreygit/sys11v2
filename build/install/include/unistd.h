@@ -124,6 +124,7 @@ ssize_t write(int filehandle, const void *buf, size_t size);
 int close(int filehandle);
 int reboot(int code);
 int sync(void);
+int meld(const char *filename1, const char *filename2, const char *filename3, int flags);
 /* mkdir - see sys/stat.h */
 int rmdir(const char *dirname);
 

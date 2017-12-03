@@ -9,12 +9,17 @@ Project 3
 
 1. (5 points) What is the difference between UIO_USERISPACE and UIO_USERSPACE? When should one use UIO_SYSSPACE instead?
 
-	The difference between UIO_USERISPACE and UIO_USERSPACE is that UIO_USERISPACE is used to define the process code and UIO_USERSPACE is used to define the process data.
+	The difference between UIO_USERISPACE and UIO_USERSPACE is that UIO_USERISPACE is used to define the process code and UIO_USERSPACE is used to define the process data. You should use UIO_SYSSPACE instead when you are in kernel space.
 
 2. (5 points) In what file are copyin and copyout defined? Hint: These functions are called in the kernel when one targeted data area is located within the address space of a user process, which may be swapped out.
+	Copyin and copyout are defined in the copyinout.c file, in the oslight/kern/vm directory.
 
 3. (5 points) What is the purpose of the SYSCALL macro? How do they get generated?
-
+	The SYSCALL macros are generated using the syscalls-mips.S file at compile time. They are used to forgo the need to make a second list of system calls, or in the case of real systems, to have each system call stub in its own source file. This is used to ease compilation.
+	
 4. (5 points) To add a new system call SYS_meld, what numerical value is possible? Where would you define it?
 
+	To add a new system call SYS_meld, the value 121 is possible, as it is not taken up by any other syscall. This value can be defined in kern/include/kern/syscall.h.
+
 5. (10 points) Describe the function call flow from the user-level test program to your implementation of sys_open or sys_meld in the kernel? (Besides a good understanding of the kernel code, you need to answer this question by reading the test program, the header file unistd.h, and the SYSCALL macros.)
+	Using the definition of a user-level function call in unistd.h and the source from elsewhere in your source code, the user-level test program is able to call a user-level function which will then call your implementation of sys_open/meld in the kernel. After the user-level function makes the system call, we are sent to trap.c and we switch to kernel mode. Then we are sent to syscall.c, where we can take the variables we have from the trapframe we generated and use them to execute a system call, referenced from SYSCALL macros and from syscall.h and the implementation of which is stored throughout the program, though in our case in file_syscalls.c.
